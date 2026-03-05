@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import beautifyText from './beautifyText';
 
 // Load environment variables
-const BIBLE_API = 'e0fe4902096e0b43f34dc51b013c5609';
+const BIBLE_API = '********************************'; // Add your personal bible API key here
 const BIBLE_ID = '9879dbb7cfe39e4d-01'; // World English Bible translation
 
 export default function BibleVerse({
@@ -91,3 +91,4 @@ export default function BibleVerse({
 
 	return <div dangerouslySetInnerHTML={{ __html: verseContent }} />;
 }
+
