@@ -11,7 +11,7 @@ Features include:
 ## Steps to build
 1. Pull the repository and install packages.
     ```sh
-    git pull https://github.com/bushieman/Bible-Verse-Extension.git
+    git pull https://github.com/bushieman/The-Word.git
     pnpm i
     ```
 
