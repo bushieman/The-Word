@@ -1,0 +1,14 @@
+# Logs
+logs
+*.log
+
+# Modules
+node_modules
+package-lock.json
+
+# Dist
+dist
+.output
+
+# Environmental Variables
+.env
