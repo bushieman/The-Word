@@ -256,7 +256,7 @@ body {
   align-items: center;
   z-index: 50;
   overflow: auto;
-  max-height: 154px; /* Set a max height to enable scrolling when content exceeds 7 lines. */
+  max-height: 350px; /* Set a max height to enable auto scrolling on long contents like chapters. */
 }
 
 .bottom text {
