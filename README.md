@@ -3,7 +3,10 @@
   ![Preview](public/Media/preview.png)
 
 
-Features include: <br>-> Quickly preview a verse without having to link it to an API or switching tabs. <br>-> Detect multiple wording of the same verse e.g 2 Corinthians 1:1, 2nd Corinthians 1:1, 2 Cor 1:1. <br>-> Title animation and multiple colors for the UI nerds.
+Features include: 
+*Quickly preview a verse without having to link it to an API or switching tabs. 
+*Detect multiple wording of the same verse e.g 2 Corinthians 1:1, 2nd Corinthians 1:1, 2 Cor 1:1.
+*Title animation and multiple colors for the UI nerds.
 
 ## Steps to build
 1. Pull the repository and install packages.
@@ -35,7 +38,7 @@ Features include: <br>-> Quickly preview a verse without having to link it to an
    
 5. For tweaks, run `npm run dev` and make changes then repeat steps 3 and 4.
    *NB*: Tweak the text colors to your liking by placing the HEX codes on colors list in src/components/Home.jsx
-   ![img](public/Media/Home.jsx.png)
+   ![img](public/Media/colors.png)
 
 ATTRIBUTION:
 <a href='https://dryicons.com/icon/bible-icon-11419'> Extension Icon by Dryicons </a>
