@@ -10,10 +10,10 @@ Features include:
 
 ## Steps to build
 1. Pull the repository and install packages.
-  ```sh
-  git pull https://github.com/bushieman/Bible-Verse-Extension.git
-  pnpm i
-  ```
+    ```sh
+    git pull https://github.com/bushieman/Bible-Verse-Extension.git
+    pnpm i
+    ```
 
 2. In the `src/components/BibleVerse.jsx`, replace the api key with your specific key from https://scripture.api.bible/ and change the bible id from https://docs.api.bible/guides/bibles to your preferred translation. 
   ![img](public/Media/api_settings.png)
