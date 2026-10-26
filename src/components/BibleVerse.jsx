@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import beautifyText from './beautifyText';
+import { createClient } from '@supabase/supabase-js';
 
-// Load environment variables
-const BIBLE_API = '********************************'; // Add your personal bible API key here
-const BIBLE_ID = '9879dbb7cfe39e4d-01'; // World English Bible translation
+const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || 'https://supabase.co';
+const SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY || 'your-publishable-anon-key';
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function BibleVerse({
 	reference,
@@ -16,71 +17,54 @@ export default function BibleVerse({
 	const [verseContent, setVerseContent] = useState('');
 
 	useEffect(() => {
-		console.log('Fetching ', reference, ' from Bible API...');
+		console.log('Fetching ', reference, ' via Supabase Edge Function...');
+		
 		async function fetchVerse() {
 			try {
-				// Step 1: Search for verse
-				const searchRes = await fetch(
-					`https://api.scripture.api.bible/v1/bibles/${BIBLE_ID}/search?query=${encodeURIComponent(
-						reference,
-					)}`,
-					{
-						headers: { 'api-key': BIBLE_API },
-					},
-				);
-				const searchData = await searchRes.json();
+				setLoading(true);
+				setError(false);
 
-				if (
-					searchData.data.passages &&
-					searchData.data.passages.length > 0
-				) {
-					const verseId = searchData.data.passages[0].id;
+				// Invoking the edge function securely via your publishable client
+				const { data, error } = await supabase.functions.invoke('get-bible-verse', {
+					body: { reference },
+				});
 
-					// Step 2: Get verse text
-					const verseRes = await fetch(
-						`https://api.scripture.api.bible/v1/bibles/${BIBLE_ID}/verses/${verseId}`,
-						{
-							headers: { 'api-key': BIBLE_API },
-						},
-					);
-					const verseData = await verseRes.json();
-					const book = searchData.data.passages[0].reference;
-					const beautifiedBook = beautifyText(book);
-					setBibleReference(beautifiedBook);
-
-					let content = verseData.data.content;
-
-					// Step 3: Parse HTML and replace <span> with <sup>
-					const parser = new DOMParser();
-					const doc = parser.parseFromString(content, 'text/html');
-
-					doc.querySelectorAll('span').forEach((span) => {
-						if (/^\d+$/.test(span.textContent.trim())) {
-							const sup = doc.createElement('sup');
-							sup.textContent = span.textContent;
-							span.replaceWith(sup);
-						}
-					});
-					setVerseText(doc.body.textContent);
-
-					// Step 4: Adjust the card heights for dynamic rendering
-					setCardHeight({
-						cardContainerValue: 'auto',
-						cardValue: 'auto',
-					});
-
-					// Step 6: Get updated HTML
-					const updatedHTML = doc.body.innerHTML;
-					setVerseContent(updatedHTML);
-					setLoading(false);
-				} else {
-					console.log('<p>Verse not found</p>');
-					setError(true);
-					setLoading(false);
+				// Catch edge function failures or network exceptions
+				if (error || !data) {
+					throw new Error(error?.message || 'Failed to retrieve verse from function');
 				}
+
+				// Format and update reference header
+				const beautifiedBook = beautifyText(data.reference);
+				setBibleReference(beautifiedBook);
+
+				// Parse raw HTML payload and safely transform structure inside the browser DOM context
+				const parser = new DOMParser();
+				const doc = parser.parseFromString(data.content, 'text/html');
+
+				doc.querySelectorAll('span').forEach((span) => {
+					if (/^\d+$/.test(span.textContent.trim())) {
+						const sup = doc.createElement('sup');
+						sup.textContent = span.textContent;
+						span.replaceWith(sup);
+					}
+				});
+				
+				setVerseText(doc.body.textContent);
+
+				// Dynamically auto-adjust height bounds
+				setCardHeight({
+					cardContainerValue: 'auto',
+					cardValue: 'auto',
+				});
+
+				setVerseContent(doc.body.innerHTML);
+				setLoading(false);
 			} catch (err) {
 				console.error('Error fetching verse:', err);
+				setError(true);
 				setVerseContent('<p>Error fetching verse</p>');
+				setLoading(false);
 			}
 		}
 
@@ -91,4 +75,3 @@ export default function BibleVerse({
 
 	return <div dangerouslySetInnerHTML={{ __html: verseContent }} />;
 }
-
