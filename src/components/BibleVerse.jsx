@@ -8,6 +8,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function BibleVerse({
 	reference,
+	bibleId,
 	setCardHeight,
 	setLoading,
 	setError,
@@ -17,28 +18,28 @@ export default function BibleVerse({
 	const [verseContent, setVerseContent] = useState('');
 
 	useEffect(() => {
-		console.log('Fetching ', reference, ' via Supabase Edge Function...');
+		if (!reference || !bibleId) return;
+
+		console.log(`Fetching ${reference} for Bible ID: ${bibleId} via Edge Function...`);
 		
 		async function fetchVerse() {
 			try {
 				setLoading(true);
 				setError(false);
 
-				// Invoking the edge function securely via your publishable client
+				// Call edge function, passing reference and the dynamic bibleId parameter
 				const { data, error } = await supabase.functions.invoke('get-bible-verse', {
-					body: { reference },
+					body: { reference, bibleId },
 				});
 
-				// Catch edge function failures or network exceptions
 				if (error || !data) {
-					throw new Error(error?.message || 'Failed to retrieve verse from function');
+					throw new Error(error?.message || 'Failed to fetch translation content');
 				}
 
-				// Format and update reference header
 				const beautifiedBook = beautifyText(data.reference);
 				setBibleReference(beautifiedBook);
 
-				// Parse raw HTML payload and safely transform structure inside the browser DOM context
+				// Parse inner HTML markup string safely 
 				const parser = new DOMParser();
 				const doc = parser.parseFromString(data.content, 'text/html');
 
@@ -52,7 +53,7 @@ export default function BibleVerse({
 				
 				setVerseText(doc.body.textContent);
 
-				// Dynamically auto-adjust height bounds
+				// Adjust layout sizing bounds
 				setCardHeight({
 					cardContainerValue: 'auto',
 					cardValue: 'auto',
@@ -61,17 +62,15 @@ export default function BibleVerse({
 				setVerseContent(doc.body.innerHTML);
 				setLoading(false);
 			} catch (err) {
-				console.error('Error fetching verse:', err);
+				console.error('Error fetching dynamic verse version:', err);
 				setError(true);
-				setVerseContent('<p>Error fetching verse</p>');
+				setVerseContent('<p>Verse unavailable for this translation</p>');
 				setLoading(false);
 			}
 		}
 
-		if (reference) {
-			fetchVerse();
-		}
-	}, [reference]);
+		fetchVerse();
+	}, [reference, bibleId]); // Dynamic hook fires automatically when bibleId changes!
 
 	return <div dangerouslySetInnerHTML={{ __html: verseContent }} />;
 }
