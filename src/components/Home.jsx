@@ -15,6 +15,25 @@ import errorAnimation from '../assets/animations/error.json';
 import './Home.css';
 import 'animate.css'; // animation css
 
+// 3 Bible translation versions with names, API IDs, and publishers
+const BIBLE_VERSIONS = [
+	{
+		name: 'NLT',
+		id: 'd6e14a625393b4da-01',
+		publisher: 'Tyndale House'
+	},
+	{
+		name: 'GNT ',
+		id: '61fd76eafa1577c2-02',
+		publisher: 'American Bible Society'
+	},
+	{
+		name: 'KJV',
+		id: 'de4e12af7f28f599-01',
+		publisher: ''
+	}
+];
+
 function Home({ selection }) {
 	// State variables
 	const [cardHeight, setCardHeight] = useState({
@@ -26,9 +45,11 @@ function Home({ selection }) {
 	const [error, setError] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const [verseText, setVerseText] = useState('');
-	const [version, setVersion] = useState(
-		'The Holy Bible. English Standard Version ®',
-	);
+	
+	// Use an index state to track and cycle through the Bible items
+	const [currentVersionIndex, setCurrentVersionIndex] = useState(0);
+	const activeVersion = BIBLE_VERSIONS[currentVersionIndex];
+
 	const selectedWord = normalizeReference(selection) || selection; // Normalize the selection
 	const [bibleReference, setBibleReference] = useState('');
 
@@ -52,10 +73,16 @@ function Home({ selection }) {
 	}, []);
 
 	const handleCopyClick = () => {
-		const verseToCopy = `${bibleReference}, "${verseText.trimEnd()}"`;
+		const verseToCopy = `${bibleReference}, "${verseText.trimEnd()}" (${activeVersion.name})`;
 		navigator.clipboard.writeText(verseToCopy);
 		setCopied(true);
 		console.log('Verse copied.');
+	};
+
+	// Cycle through the translations array back to the start index
+	const handleVersionClick = () => {
+		setCopied(false);
+		setCurrentVersionIndex((prevIndex) => (prevIndex + 1) % BIBLE_VERSIONS.length);
 	};
 
 	// Randomize text colors
@@ -102,22 +129,19 @@ function Home({ selection }) {
 
 								<div className="bottom-container">
 									<div className="bottom">
-										<text style={{ color }}>
+										<div style={{ color }}>
 											{selectedWord ? (
 												<BibleVerse
 													reference={selectedWord}
-													setCardHeight={
-														setCardHeight
-													}
+													bibleId={activeVersion.id}
+													setCardHeight={setCardHeight}
 													setLoading={setLoading}
 													setError={setError}
 													setVerseText={setVerseText}
-													setBibleReference={
-														setBibleReference
-													}
+													setBibleReference={setBibleReference}
 												/>
 											) : null}
-										</text>
+										</div>
 									</div>
 								</div>
 
@@ -141,7 +165,14 @@ function Home({ selection }) {
 								{loading ? (
 									''
 								) : (
-									<div className="version">{version}</div>
+									<div 
+										className="version" 
+										onClick={handleVersionClick}
+										style={{ cursor: 'pointer' }}
+										title="Click to change version"
+									>
+										{`${activeVersion.publisher} (${activeVersion.name})`}
+									</div>
 								)}
 							</div>
 						) : (
