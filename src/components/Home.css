@@ -1,13 +1,13 @@
 @font-face {
-  font-family: 'circular-pro';
-  src: url('../assets/fonts/CircularStd-Book.ttf');
+  font-family: "inter-medium";
+  src: url("../assets/fonts/Inter_500Medium.ttf");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'mali-bold';
-  src: url('../assets/fonts/Mali-Bold.ttf');
+  font-family: "mali-bold";
+  src: url("../assets/fonts/Mali-Bold.ttf");
   font-style: normal;
 }
 
@@ -49,15 +49,17 @@ body {
   flex-direction: column;
   top: 27px;
   position: relative;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+  box-shadow:
+    rgba(0, 0, 0, 0.3) 0px 19px 38px,
+    rgba(0, 0, 0, 0.22) 0px 15px 12px;
 }
 
 .card::before {
-  background-image: url('../assets/images/background.jpg');
+  background-image: url("../assets/images/background.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -95,11 +97,11 @@ body {
 }
 
 .loading-active::before {
-  background-image: url('../assets/images/background.jpg');
+  background-image: url("../assets/images/background.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -127,11 +129,11 @@ body {
 }
 
 .error-active::before {
-  background-image: url('../assets/images/background.jpg');
+  background-image: url("../assets/images/background.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -256,24 +258,25 @@ body {
   align-items: center;
   z-index: 50;
   overflow: auto;
+  text-align: center;
   max-height: 350px; /* Set a max height to enable auto scrolling on long contents like chapters. */
+  font-family: inter-medium;
 }
 
 .bottom text {
   font-size: 18px;
   text-align: center;
-  font-family: circular-pro;
-  color: #FFE3BD;
+  color: #ffe3bd;
 }
 
 .bottom::-webkit-scrollbar {
-  width: 0px;               
+  width: 0px;
   height: 70px;
 }
 .bottom::-webkit-scrollbar-thumb {
-	border-radius: 7px;
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-	background-color: whitesmoke;
+  border-radius: 7px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: whitesmoke;
 }
 
 .bottom p {
@@ -293,7 +296,57 @@ body {
   border-right: 1px dotted var(--tape-edge-gray);
   border-left: 1px dotted var(--tape-edge-gray);
   opacity: 0.8;
-  clip-path: polygon(1% 0%, 19% 1%, 30% 0%, 38% 0%, 48% 1%, 58% 3%, 62% 3%, 79% 3%, 73% 1%, 84% 0%, 87% 0%, 91% 4%, 92% 2%, 99% 0%, 96% 5%, 96% 20%, 100% 34%, 100% 46%, 99% 54%, 95% 57%, 87% 69%, 100% 77%, 100% 82%, 100% 89%, 100% 96%, 90% 99%, 76% 100%, 71% 97%, 63% 100%, 54% 99%, 51% 100%, 37% 98%, 34% 100%, 21% 99%, 17% 100%, 14% 98%, 10% 100%, 3% 98%, 3% 100%, 0% 85%, 4% 80%, 0% 74%, 4% 55%, 6% 45%, 3% 40%, 0% 34%, 6% 25%, 4% 16%, 1% 13%);
+  clip-path: polygon(
+    1% 0%,
+    19% 1%,
+    30% 0%,
+    38% 0%,
+    48% 1%,
+    58% 3%,
+    62% 3%,
+    79% 3%,
+    73% 1%,
+    84% 0%,
+    87% 0%,
+    91% 4%,
+    92% 2%,
+    99% 0%,
+    96% 5%,
+    96% 20%,
+    100% 34%,
+    100% 46%,
+    99% 54%,
+    95% 57%,
+    87% 69%,
+    100% 77%,
+    100% 82%,
+    100% 89%,
+    100% 96%,
+    90% 99%,
+    76% 100%,
+    71% 97%,
+    63% 100%,
+    54% 99%,
+    51% 100%,
+    37% 98%,
+    34% 100%,
+    21% 99%,
+    17% 100%,
+    14% 98%,
+    10% 100%,
+    3% 98%,
+    3% 100%,
+    0% 85%,
+    4% 80%,
+    0% 74%,
+    4% 55%,
+    6% 45%,
+    3% 40%,
+    0% 34%,
+    6% 25%,
+    4% 16%,
+    1% 13%
+  );
 }
 
 sup {
@@ -307,13 +360,21 @@ sup {
   bottom: 0px;
   display: flex;
   justify-content: center;
-  font-size: 12px;
+  font-size: 14px;
+  font-family: inter-medium;
   margin-bottom: 10px;
   text-align: center;
-  font-family: circular-pro;
   color: grey;
+  cursor: pointer;
+  padding: 5px 10px;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 1001;
 }
 
+.version:hover {
+  background-color: rgba(104, 104, 104, 0.091);
+}
 .home {
   color: #c5b100;
   color: #8d99ff;

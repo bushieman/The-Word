@@ -5,9 +5,6 @@ declare module "wxt/browser" {
   export type PublicPath =
     | ""
     | "/"
-    | "/Media/api_settings.png"
-    | "/Media/colors.png"
-    | "/Media/preview.png"
     | "/content-scripts/content.js"
     | "/icon/128.png"
     | "/icon/16.png"
@@ -16,6 +13,9 @@ declare module "wxt/browser" {
     | "/icon/48.png"
     | "/icon/64.png"
     | "/icon/96.png"
+    | "/Media/api_settings.png"
+    | "/Media/colors.png"
+    | "/Media/preview.png"
   type HtmlPublicPath = Extract<PublicPath, `${string}.html`>
   export interface WxtRuntime {
     getURL(path: PublicPath): string;

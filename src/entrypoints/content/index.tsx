@@ -1,13 +1,13 @@
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 
-
 export default defineContentScript({
   matches: ["*://*/*"],
   cssInjectionMode: "ui",
 
   async main(ctx) {
     let selectedText: string | null = null;
+
     // let ui: ReturnType<typeof createShadowRootUi>;
 
     const handleClickOutside = (event: MouseEvent) => {
@@ -17,7 +17,7 @@ export default defineContentScript({
         !ui.shadowHost.contains(event.target as Node)
       ) {
         ui.remove();
-        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener("mousedown", handleClickOutside);
       }
     };
 
@@ -26,14 +26,13 @@ export default defineContentScript({
       position: "inline",
       anchor: "body",
       append: "first",
-      onMount: (container ) => {
+      onMount: (container) => {
         const wrapper = document.createElement("div");
         container.append(wrapper);
 
-
         const root = ReactDOM.createRoot(wrapper);
-        root.render(<App text={selectedText ?? undefined}/>);
-        document.addEventListener('mousedown', handleClickOutside);
+        root.render(<App text={selectedText ?? undefined} />);
+        document.addEventListener("mousedown", handleClickOutside);
         return { root, wrapper };
       },
       onRemove: (elements) => {
@@ -43,13 +42,38 @@ export default defineContentScript({
     });
 
     // Listen for mouseup and pass selected text to ui.mount
-    document.addEventListener("mouseup", (e) => {
-      if (e.ctrlKey && e.altKey) {
-        const text = window.getSelection()?.toString().trim();
-        selectedText = text ? text : null;
-        ui.mount(); // Pass text as a prop
-      }
-})
-},
-});
 
+    // Variable to track if another key was pressed while Control was held down
+    let secondaryKeyPressed = false;
+
+    document.addEventListener("keydown", (e) => {
+      // If Control is pressed, reset our tracking flag for a fresh press cycle
+      if (e.key === "Control") {
+        secondaryKeyPressed = false;
+        return;
+      }
+      
+      // If any other key is pressed down while Control is active, flag it
+      if (e.ctrlKey) {
+        secondaryKeyPressed = true;
+      }
+    });
+
+    document.addEventListener("keyup", (e) => {
+      if (e.key !== "Control") return;
+
+      // If a secondary key was involved in this press window, abort immediately
+      if (secondaryKeyPressed) {
+        secondaryKeyPressed = false; // reset flag
+        return;
+      }
+
+      const text = window.getSelection()?.toString().trim();
+      if (!text) return; // Guard against mounting with empty text
+
+      selectedText = text;
+      ui.mount();
+    });
+  
+  },
+});

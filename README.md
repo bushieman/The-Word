@@ -1,4 +1,4 @@
-# A simple bible verse preview extension using CTRL+ALT+selection.
+# A simple bible verse preview extension using CTRL+selection.
 
   ![Preview](public/Media/preview.png)
 

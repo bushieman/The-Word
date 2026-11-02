@@ -1,76 +1,86 @@
-import React, { useEffect, useState } from 'react';
-import beautifyText from './beautifyText';
-import { createClient } from '@supabase/supabase-js';
+import React, { useEffect, useState } from "react";
+import beautifyText from "./beautifyText";
+import { createClient } from "@supabase/supabase-js";
 
-const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_PUBLISHABLE_KEY;
+const SUPABASE_URL = "https://lilfyqzbweircbbywsym.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_HCv14V3jWQQK-57NGiCLug_AJefaObU";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function BibleVerse({
-	reference,
-	bibleId,
-	setCardHeight,
-	setLoading,
-	setError,
-	setVerseText,
-	setBibleReference,
+  reference,
+  bibleId,
+  setCardHeight,
+  setLoading,
+  setError,
+  setVerseText,
+  setBibleReference,
 }) {
-	const [verseContent, setVerseContent] = useState('');
+  const [verseContent, setVerseContent] = useState("");
+  const [isActive, setIsActive] = useState(false);
 
-	useEffect(() => {
-		if (!reference || !bibleId) return;
+  useEffect(() => {
+	setIsActive(false)
+    if (!reference || !bibleId) return;
 
-		console.log(`Fetching ${reference} for Bible ID: ${bibleId} via Edge Function...`);
-		
-		async function fetchVerse() {
-			try {
-				setLoading(true);
-				setError(false);
+    console.log(
+      `Fetching ${reference} for Bible ID: ${bibleId} via Edge Function...`,
+    );
 
-				// Call edge function, passing reference and the dynamic bibleId parameter
-				const { data, error } = await supabase.functions.invoke('get-bible-verse', {
-					body: { reference, bibleId },
-				});
+    async function fetchVerse() {
+      try {
+        setLoading(true);
+        setError(false);
 
-				if (error || !data) {
-					throw new Error(error?.message || 'Failed to fetch translation content');
-				}
+        // Call edge function, passing reference and the dynamic bibleId parameter
+        const { data, error } = await supabase.functions.invoke(
+          "get-bible-verse",
+          {
+            body: { reference, bibleId },
+          },
+        );
 
-				const beautifiedBook = beautifyText(data.reference);
-				setBibleReference(beautifiedBook);
+        if (error || !data) {
+          throw new Error(
+            error?.message || "Failed to fetch translation content",
+          );
+        }
 
-				// Parse inner HTML markup string safely 
-				const parser = new DOMParser();
-				const doc = parser.parseFromString(data.content, 'text/html');
+        const beautifiedBook = beautifyText(data.reference);
+        setBibleReference(beautifiedBook);
 
-				doc.querySelectorAll('span').forEach((span) => {
-					if (/^\d+$/.test(span.textContent.trim())) {
-						const sup = doc.createElement('sup');
-						sup.textContent = span.textContent;
-						span.replaceWith(sup);
-					}
-				});
-				
-				setVerseText(doc.body.textContent);
+        // Parse inner HTML markup string safely
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(data.content, "text/html");
 
-				// Adjust layout sizing bounds
-				setCardHeight({
-					cardContainerValue: 'auto',
-					cardValue: 'auto',
-				});
+        doc.querySelectorAll("span").forEach((span) => {
+          if (/^\d+$/.test(span.textContent.trim())) {
+            const sup = doc.createElement("sup");
+            sup.textContent = span.textContent;
+            span.replaceWith(sup);
+          }
+        });
 
-				setVerseContent(doc.body.innerHTML);
-				setLoading(false);
-			} catch (err) {
-				console.error('Error fetching dynamic verse version:', err);
-				setError(true);
-				setVerseContent('<p>Verse unavailable for this translation</p>');
-				setLoading(false);
-			}
-		}
+        setVerseText(doc.body.textContent);
 
-		fetchVerse();
-	}, [reference, bibleId]); // Dynamic hook fires automatically when bibleId changes!
+        // Adjust layout sizing bounds
+        setCardHeight({
+          cardContainerValue: "auto",
+          cardValue: "auto",
+        });
 
-	return <div dangerouslySetInnerHTML={{ __html: verseContent }} />;
+        setVerseContent(doc.body.innerHTML);
+        setLoading(false);
+		setIsActive(true)
+      } catch (err) {
+        console.error("Error fetching dynamic verse version:", err);
+        setError(true);
+        setVerseContent("<p>Verse unavailable for this translation</p>");
+        setLoading(false);
+      }
+    }
+
+    fetchVerse();
+  }, [reference, bibleId]); // Dynamic hook fires automatically when bibleId changes!
+
+  return isActive ? <div dangerouslySetInnerHTML={{ __html: verseContent }} />: null;
 }
