@@ -148,17 +148,14 @@ body {
 }
 
 .word {
-  font-family: garet-bold;
-  font-size: 27px;
   position: relative;
   margin-right: auto;
   margin-left: auto;
-  font-weight: bolder;
   z-index: 20;
-
   font-family: mali-bold;
-  font-size: 24px;
+  font-size: 26px;
   text-transform: uppercase;
+  font-weight: 500;
 }
 
 .bookmark {
@@ -261,10 +258,11 @@ body {
   text-align: center;
   max-height: 350px; /* Set a max height to enable auto scrolling on long contents like chapters. */
   font-family: inter-medium;
+  font-weight: 500;
+  font-size: 20px;
 }
 
 .bottom text {
-  font-size: 18px;
   text-align: center;
   color: #ffe3bd;
 }
@@ -352,7 +350,8 @@ body {
 sup {
   color: whitesmoke;
   padding-right: 3px;
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .version {
@@ -370,6 +369,7 @@ sup {
   margin-left: auto;
   margin-right: auto;
   z-index: 1001;
+  font-weight: 500;
 }
 
 .version:hover {
