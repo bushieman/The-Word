@@ -6,8 +6,6 @@ logs
 node_modules
 package-lock.json
 
-# Dist
-dist
 .output
 
 # Environmental Variables

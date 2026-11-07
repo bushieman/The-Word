@@ -38,7 +38,7 @@
 		"typescript": "^5.8.2",
 		"wxt": "^0.20.5"
 	},
-	"description": "![Preview1](public/Media/Preview1.png)",
+	"description": "Don't break your flow! Quickly preview a bible verse with CTRL+highlight.",
 	"main": "index.tsx",
 	"repository": {
 		"type": "git",
