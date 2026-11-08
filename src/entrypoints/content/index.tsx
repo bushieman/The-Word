@@ -8,8 +8,6 @@ export default defineContentScript({
   async main(ctx) {
     let selectedText: string | null = null;
 
-    // let ui: ReturnType<typeof createShadowRootUi>;
-
     const handleClickOutside = (event: MouseEvent) => {
       if (
         ui &&
@@ -41,35 +39,34 @@ export default defineContentScript({
       },
     });
 
-    // Listen for mouseup and pass selected text to ui.mount
-
-    // Variable to track if another key was pressed while Control was held down
+    // Track if a non-modifier key was pressed during the shortcut window
     let secondaryKeyPressed = false;
 
     document.addEventListener("keydown", (e) => {
-      // If Control is pressed, reset our tracking flag for a fresh press cycle
-      if (e.key === "Control") {
-        secondaryKeyPressed = false;
+      // If either modifier is pressed down, reset tracking if it's a fresh sequence
+      if (e.key === "Control" || e.key === "Alt") {
         return;
       }
       
-      // If any other key is pressed down while Control is active, flag it
-      if (e.ctrlKey) {
+      // If any other key is pressed while BOTH Ctrl and Alt are active, flag it
+      if (e.ctrlKey && e.altKey) {
         secondaryKeyPressed = true;
       }
     });
 
     document.addEventListener("keyup", (e) => {
-      if (e.key !== "Control") return;
+      // Trigger when either Control or Alt is released, provided BOTH were active
+      if (e.key !== "Control" && e.key !== "Alt") return;
+      if (!e.ctrlKey && !e.altKey) return; // Ensures at least one modifier was held down
 
-      // If a secondary key was involved in this press window, abort immediately
+      // If a third, non-modifier key was involved, abort
       if (secondaryKeyPressed) {
-        secondaryKeyPressed = false; // reset flag
+        secondaryKeyPressed = false; 
         return;
       }
 
       const text = window.getSelection()?.toString().trim();
-      if (!text) return; // Guard against mounting with empty text
+      if (!text) return; 
 
       selectedText = text;
       ui.mount();
